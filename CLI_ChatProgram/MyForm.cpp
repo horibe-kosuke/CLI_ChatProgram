@@ -6,7 +6,7 @@ void CLIChatProgram::MyForm::P2P_Server()
 {
 
 	int port = 12345;
-	IPAddress^ ipAddress = IPAddress::Parse("127.0.0.1");
+	server_ipAddress = IPAddress::Parse(server_ipAddress_textBox->Text);
 	try {
 		if (state->InvokeRequired) {
 			stateLabelDelegate^ invoker = (gcnew stateLabelDelegate(this, &MyForm::stateLabel));
@@ -20,7 +20,7 @@ void CLIChatProgram::MyForm::P2P_Server()
 
 
 
-		listener = gcnew TcpListener(ipAddress, port);
+		listener = gcnew TcpListener(server_ipAddress, port);
 
 		listener->Start();
 
@@ -64,7 +64,7 @@ void CLIChatProgram::MyForm::P2P_Server()
 				ListViewItem^ item = gcnew ListViewItem(dt->Now.ToString("HH:mm:ss"));
 
 				item->Checked = true;
-				item->SubItems->Add(message);
+				item->SubItems->Add("受信:" + message);
 
 
 
@@ -99,12 +99,12 @@ void CLIChatProgram::MyForm::P2P_Client()
 {
 
 	int port = 12345;
-	IPAddress^ ipAddress = IPAddress::Parse("127.0.0.1");
+	others_server_ipAddress = IPAddress::Parse(others_server_ipAddress_textBox->Text);
 
 	TcpClient^ client = gcnew TcpClient();
 
 	//接続
-	client->Connect(ipAddress, port);
+	client->Connect(others_server_ipAddress, port);
 
 	NetworkStream^ stream = client->GetStream();;
 
@@ -138,7 +138,7 @@ System::Void CLIChatProgram::MyForm::button1_Click(System::Object^ sender, Syste
 	ListViewItem^ item = gcnew ListViewItem(dt->Now.ToString("HH:mm:ss"));
 
 	item->Checked = true;
-	item->SubItems->Add(textBox1->Text);
+	item->SubItems->Add("送信" + textBox1->Text);
 
 	listView1->Items->Add(item);
 
@@ -170,8 +170,7 @@ System::Void CLIChatProgram::MyForm::button_connect_Click(System::Object^ sender
 				sever_thread = gcnew Thread(gcnew ThreadStart(this, &MyForm::P2P_Server));
 				sever_thread->Start();
 
-				client_thread = gcnew Thread(gcnew ThreadStart(this, &MyForm::P2P_Client));
-				client_thread->Start();
+
 			}
 		}
 		//クライアント側
@@ -180,8 +179,6 @@ System::Void CLIChatProgram::MyForm::button_connect_Click(System::Object^ sender
 				sever_thread = gcnew Thread(gcnew ThreadStart(this, &MyForm::P2P_Server));
 				sever_thread->Start();
 
-				client_thread = gcnew Thread(gcnew ThreadStart(this, &MyForm::P2P_Client));
-				client_thread->Start();
 			}
 
 		}
