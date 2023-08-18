@@ -10,6 +10,7 @@ namespace CLIChatProgram {
 	using namespace System::Drawing;
 	using namespace System::Net;
 	using namespace System::Net::Sockets;
+	using namespace System::Text;
 	using namespace System::Threading;
 	/// <summary>
 	/// MyForm の概要
@@ -17,13 +18,19 @@ namespace CLIChatProgram {
 	public ref class MyForm : public System::Windows::Forms::Form
 	{
 	public:
+
+		//自分が作った変数
+		Thread^ sever_thread;
+		Thread^ client_thread;
+		bool Thread_State = true;
+		TcpListener^ listener;
+
 		MyForm(void)
 		{
 			InitializeComponent();
 			//
 			//TODO: ここにコンストラクター コードを追加します
 			//
-
 		}
 
 	protected:
@@ -38,8 +45,8 @@ namespace CLIChatProgram {
 			}
 		}
 
-	private: System::Windows::Forms::TextBox^ textBox1;
-	private: System::Windows::Forms::Button^ button1;
+	private: System::Windows::Forms::TextBox^ textBox1;		//サーバーに送る文字
+	private: System::Windows::Forms::Button^ button1;		//
 	private: System::Windows::Forms::Label^ label1;
 	private: System::Windows::Forms::TextBox^ textBox2;
 	private: System::Windows::Forms::Button^ button_connect;
@@ -211,36 +218,33 @@ namespace CLIChatProgram {
 		}
 #pragma endregion
 
+
 	private: void P2P_Server();
+	private: void P2P_Client();
+
+	private: delegate void stateLabelDelegate(System::String^ str);
+	private: void stateLabel(String^ str);
+
+	private: delegate void ListViewsDelegate(ListViewItem^ item);
+	private:void ListViews(ListViewItem^ item);
+
 
 	private: System::Void textBox1_TextChanged(System::Object^ sender, System::EventArgs^ e) {
 
 	}
-	private: System::Void button1_Click(System::Object^ sender, System::EventArgs^ e) {
-		DateTime^ dt = gcnew DateTime;
-		TimeSpan^ s = dt->TimeOfDay;
-		String^ str = s->ToString();
-
-		ListViewItem^ item = gcnew ListViewItem(dt->Now.ToString("HH:mm:ss"));
-
-		item->Checked = true;
-		item->SubItems->Add(textBox1->Text);
-
-		listView1->Items->Add(item);
-
-		int count = listView1->Items->Count - 1;
-		listView1->EnsureVisible(count);
-
-	}
+	private: System::Void button1_Click(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void MyForm_Load(System::Object^ sender, System::EventArgs^ e) {
 		Font = gcnew System::Drawing::Font(System::Drawing::FontFamily::GenericMonospace, 20);
 		comboBox1->SelectedIndex=0;
+		state->Text = "";
+
 	}
 
 
 	private: System::Void listView1_SelectedIndexChanged(System::Object^ sender, System::EventArgs^ e) {
 	}
-	private: System::Void comboBox1_SelectedIndexChanged(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void comboBox1_SelectedIndexChanged(System::Object^ sender, System::EventArgs^ e) {
+	}
 	private: System::Void button_connect_Click(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void IP_label_Click(System::Object^ sender, System::EventArgs^ e) {
 	}
