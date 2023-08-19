@@ -127,12 +127,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DesignControls.cpp" />
     <ClCompile Include="MyForm.cpp" />
+    <ClCompile Include="P2P_Client.cpp" />
+    <ClCompile Include="P2P_Server.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DesignControls.h" />
     <ClInclude Include="MyForm.h">
       <FileType>CppForm</FileType>
     </ClInclude>
+    <ClInclude Include="P2P_Client.h" />
+    <ClInclude Include="P2P_Server.h" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MyForm.resx">

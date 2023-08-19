@@ -5,18 +5,18 @@
 void CLIChatProgram::MyForm::P2P_Server()
 {
 
-	server_port = Int32::Parse(server_port_textBox->Text);
-	server_ipAddress = IPAddress::Parse(server_ipAddress_textBox->Text);
+	server_port = Int32::Parse(DC->server_port_textBox->Text);
+	server_ipAddress = IPAddress::Parse(DC->server_ipAddress_textBox->Text);
 	try {
-		if (server_state->InvokeRequired) {
+		if (DC->server_state->InvokeRequired) {
 			stateLabelDelegate^ invoker = (gcnew stateLabelDelegate(this, &MyForm::stateLabel));
-			server_state->ForeColor = SystemColors::ControlText.Green;
-			server_state->Invoke(invoker, server_state, "サーバー立てました");
+			DC->server_state->ForeColor = SystemColors::ControlText.Green;
+			DC->server_state->Invoke(invoker, DC->server_state, "サーバー立てました");
 
 		}
 		else {
-			server_state->ForeColor = SystemColors::ControlText.Green;
-			server_state->Text = "サーバー立てました";
+			DC->server_state->ForeColor = SystemColors::ControlText.Green;
+			DC->server_state->Text = "サーバー立てました";
 		}
 
 
@@ -56,15 +56,15 @@ void CLIChatProgram::MyForm::P2P_Server()
 
 
 
-				if (listView1->InvokeRequired) {
+				if (DC->listView1->InvokeRequired) {
 					ListViewsDelegate^ invoker = (gcnew ListViewsDelegate(this, &MyForm::ListViews));
-					listView1->Invoke(invoker, item);
+					DC->listView1->Invoke(invoker, item);
 
 				}
 				else {
-					listView1->Items->Add(item);
-					int count = listView1->Items->Count - 1;
-					listView1->EnsureVisible(count);
+					DC->listView1->Items->Add(item);
+					int count = DC->listView1->Items->Count - 1;
+					DC->listView1->EnsureVisible(count);
 				}
 
 			}
@@ -86,19 +86,19 @@ void CLIChatProgram::MyForm::P2P_Server()
 
 void CLIChatProgram::MyForm::P2P_Client_State()
 {
-	state->ForeColor = SystemColors::ControlText.Red;
-	state->Text = "接続中";
+	DC->state->ForeColor = SystemColors::ControlText.Red;
+	DC->state->Text = "接続中";
 
 
-	others_sever_port = Int32::Parse(others_sever_port_textBox->Text);
-	others_server_ipAddress = IPAddress::Parse(others_server_ipAddress_textBox->Text);
+	others_sever_port = Int32::Parse(DC->others_sever_port_textBox->Text);
+	others_server_ipAddress = IPAddress::Parse(DC->others_server_ipAddress_textBox->Text);
 
 	TcpClient^ client = gcnew TcpClient();
 	try {
 		//接続
 		client->Connect(others_server_ipAddress, others_sever_port);
-		state->ForeColor = SystemColors::ControlText.Green;
-		state->Text = "接続しました。";
+		DC->state->ForeColor = SystemColors::ControlText.Green;
+		DC->state->Text = "接続しました。";
 		NetworkStream^ stream = client->GetStream();
 
 		array<Byte>^ data = Encoding::UTF8->GetBytes("接続しました。");
@@ -126,13 +126,13 @@ void CLIChatProgram::MyForm::P2P_Client_State()
 	}
 }
 
-void CLIChatProgram::MyForm::P2P_Client() {
+void CLIChatProgram::MyForm::P2P_Client_T() {
 	TcpClient^ client = gcnew TcpClient();
 	//接続
 	client->Connect(others_server_ipAddress, others_sever_port);
 	NetworkStream^ stream = client->GetStream();
 
-	array<Byte>^ data = Encoding::UTF8->GetBytes(textBox1->Text);
+	array<Byte>^ data = Encoding::UTF8->GetBytes(DC->textBox1->Text);
 
 
 	stream->Write(data, 0, data->Length);
@@ -144,44 +144,10 @@ void CLIChatProgram::MyForm::P2P_Client() {
 void CLIChatProgram::MyForm::stateLabel(System::Windows::Forms::Label^ label, String^ str)
 {
 
-	label->Text = server_ipAddress_textBox->Text + str;
+	label->Text = DC->server_ipAddress_textBox->Text + str;
 }
 
-void CLIChatProgram::MyForm::P2P_Disconnection()
-{
-	if (others_server_ipAddress_textBox->Text == "" && others_sever_port_textBox->Text == "")return;
 
-	others_sever_port = Int32::Parse(others_sever_port_textBox->Text);
-	others_server_ipAddress = IPAddress::Parse(others_server_ipAddress_textBox->Text);
-
-	TcpClient^ client = gcnew TcpClient();
-
-	try {
-		//接続
-		client->Connect(others_server_ipAddress, others_sever_port);
-
-		NetworkStream^ stream = client->GetStream();
-
-		array<Byte>^ data = Encoding::UTF8->GetBytes("");
-
-
-		stream->Write(data, 0, data->Length);
-
-		client->Close();
-		stream->Close();
-
-	}
-	catch (System::ArgumentNullException^) {
-		client->Close();
-	}
-	catch (SocketException^)
-	{
-		client->Close();
-	}
-	catch (ObjectDisposedException^) {
-		client->Close();
-	}
-}
 
 void CLIChatProgram::MyForm::TimerCallback(Object^ sender, System::Timers::ElapsedEventArgs^ e)
 {
@@ -195,15 +161,15 @@ void CLIChatProgram::MyForm::TimerCallback(Object^ sender, System::Timers::Elaps
 
 void CLIChatProgram::MyForm::ListViews(ListViewItem^ item)
 {
-	listView1->Items->Add(item);
-	int count = listView1->Items->Count - 1;
-	listView1->EnsureVisible(count);
+	DC->listView1->Items->Add(item);
+	int count = DC->listView1->Items->Count - 1;
+	DC->listView1->EnsureVisible(count);
 }
 
 System::Void CLIChatProgram::MyForm::Send_button_Click(System::Object^ sender, System::EventArgs^ e)
 {
 
-	if (textBox1->Text != "" && Client_State == true) {
+	if (DC->textBox1->Text != "" && Client_State == true) {
 		DateTime^ dt = gcnew DateTime;
 		TimeSpan^ s = dt->TimeOfDay;
 		String^ str = s->ToString();
@@ -211,15 +177,15 @@ System::Void CLIChatProgram::MyForm::Send_button_Click(System::Object^ sender, S
 		ListViewItem^ item = gcnew ListViewItem(dt->Now.ToString("HH:mm:ss"));
 
 		item->Checked = true;
-		item->SubItems->Add("送信:" + textBox1->Text);
+		item->SubItems->Add("送信:" + DC->textBox1->Text);
 
-		listView1->Items->Add(item);
+		DC->listView1->Items->Add(item);
 
-		int count = listView1->Items->Count - 1;
-		listView1->EnsureVisible(count);
+		int count = DC->listView1->Items->Count - 1;
+		DC->listView1->EnsureVisible(count);
 
 		if (Client_State == true) {
-			P2P_Client();
+			P2P_Client_T();
 		}
 		else {
 			P2P_Client_State();
@@ -246,10 +212,6 @@ int main(array<System::String^>^ args) {
 		Form->listener->Stop();
 		Form->Server_Thread_State = false;
 		auto a = Form->sever_thread->Join(1000);
-	}
-
-	if (Form->client_thread != nullptr) {
-		Form->client_thread->Join();
 	}
 
 	return 0;
