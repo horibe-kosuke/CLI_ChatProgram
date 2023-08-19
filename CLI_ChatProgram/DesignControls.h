@@ -2,6 +2,7 @@
 ref class DesignControls
 {
 public:
+	DesignControls();
 	DesignControls(System::Windows::Forms::Form^ parentForm);
 	~DesignControls();
 

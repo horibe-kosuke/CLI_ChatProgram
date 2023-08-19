@@ -83,64 +83,6 @@ void CLIChatProgram::MyForm::P2P_Server()
 
 }
 
-
-void CLIChatProgram::MyForm::P2P_Client_State()
-{
-	DC->state->ForeColor = SystemColors::ControlText.Red;
-	DC->state->Text = "Ú‘±’†";
-
-
-	others_sever_port = Int32::Parse(DC->others_sever_port_textBox->Text);
-	others_server_ipAddress = IPAddress::Parse(DC->others_server_ipAddress_textBox->Text);
-
-	TcpClient^ client = gcnew TcpClient();
-	try {
-		//Ú‘±
-		client->Connect(others_server_ipAddress, others_sever_port);
-		DC->state->ForeColor = SystemColors::ControlText.Green;
-		DC->state->Text = "Ú‘±‚µ‚Ü‚µ‚½B";
-		NetworkStream^ stream = client->GetStream();
-
-		array<Byte>^ data = Encoding::UTF8->GetBytes("Ú‘±‚µ‚Ü‚µ‚½B");
-
-
-		stream->Write(data, 0, data->Length);
-
-		client->Close();
-		stream->Close();
-
-		Client_State = true;
-	}
-	catch (System::ArgumentNullException^) {
-		client->Close();
-		Client_State = false;
-	}
-	catch (SocketException^)
-	{
-		client->Close();
-		Client_State = false;
-	}
-	catch (ObjectDisposedException^) {
-		client->Close();
-		Client_State = false;
-	}
-}
-
-void CLIChatProgram::MyForm::P2P_Client_T() {
-	TcpClient^ client = gcnew TcpClient();
-	//Ú‘±
-	client->Connect(others_server_ipAddress, others_sever_port);
-	NetworkStream^ stream = client->GetStream();
-
-	array<Byte>^ data = Encoding::UTF8->GetBytes(DC->textBox1->Text);
-
-
-	stream->Write(data, 0, data->Length);
-
-	client->Close();
-	stream->Close();
-}
-
 void CLIChatProgram::MyForm::stateLabel(System::Windows::Forms::Label^ label, String^ str)
 {
 
@@ -168,35 +110,13 @@ void CLIChatProgram::MyForm::ListViews(ListViewItem^ item)
 
 System::Void CLIChatProgram::MyForm::Send_button_Click(System::Object^ sender, System::EventArgs^ e)
 {
-
-	if (DC->textBox1->Text != "" && Client_State == true) {
-		DateTime^ dt = gcnew DateTime;
-		TimeSpan^ s = dt->TimeOfDay;
-		String^ str = s->ToString();
-
-		ListViewItem^ item = gcnew ListViewItem(dt->Now.ToString("HH:mm:ss"));
-
-		item->Checked = true;
-		item->SubItems->Add("‘—M:" + DC->textBox1->Text);
-
-		DC->listView1->Items->Add(item);
-
-		int count = DC->listView1->Items->Count - 1;
-		DC->listView1->EnsureVisible(count);
-
-		if (Client_State == true) {
-			P2P_Client_T();
-		}
-		else {
-			P2P_Client_State();
-		}
-	}
+	P2Pclient->Start();
 }
 
 
 System::Void CLIChatProgram::MyForm::button_connect_Click(System::Object^ sender, System::EventArgs^ e)
 {
-	P2P_Client_State();
+	P2Pclient->Start();
 }
 
 
