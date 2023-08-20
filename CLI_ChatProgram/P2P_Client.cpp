@@ -75,9 +75,6 @@ const bool P2P_Client::Get_Client_State()
 
 void P2P_Client::SendDataToServer()
 {
-	if(DC->others_server_ipAddress_textBox->Text!= others_server_ipAddress->ToString()) this->Disconnection(); 
-	if(DC->others_sever_port_textBox->Text!= others_sever_port.ToString()) this->Disconnection();
-
 
 
 	if (DC->textBox1->Text != "" && Client_State == true) {

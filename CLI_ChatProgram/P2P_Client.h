@@ -25,9 +25,6 @@ public:
 
 private:
 	DesignControls^ DC;
-	//System::Windows::Forms::Label^ label;								//ウィンドウ上に文字描画変数
-	//System::Windows::Forms::TextBox^ others_sever_ipAddress_textBox;	//接続先のIPアドレステキストボックス
-	//System::Windows::Forms::TextBox^ others_sever_port_textBox;			//接続先のポート番号テキストボックス
 
 	//接続できてるか調べる変数　true=接続できてる　false=接続できてない
 	bool Client_State;			
