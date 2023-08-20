@@ -1,6 +1,7 @@
 #pragma once
 
 #include "P2P_Client.h"
+#include "P2P_Server.h"
 #include "DesignControls.h"
 namespace CLIChatProgram {
 
@@ -31,6 +32,7 @@ namespace CLIChatProgram {
 			InitializeComponent();
 			
 			P2Pclient=gcnew P2P_Client(DC);
+			P2Pserver=gcnew P2P_Server(DC);
 		}
 
 	protected:
@@ -102,6 +104,8 @@ namespace CLIChatProgram {
 #pragma endregion
 	//自分が作った変数
 	private: P2P_Client^ P2Pclient;
+	private: P2P_Server^ P2Pserver;
+
 	private: DesignControls^ DC;
 	public:	Thread^ sever_thread;
 	public: bool Server_Thread_State = true;
@@ -117,7 +121,7 @@ namespace CLIChatProgram {
 
 
 	private: void TimerCallback(System::Object^ sender, System::Timers::ElapsedEventArgs^ e);
-	private: void P2P_Server();
+	private: void P2P_Server_T();
 
 	private: delegate void stateLabelDelegate(System::Windows::Forms::Label^ label, System::String^ str);
 	private: void stateLabel(System::Windows::Forms::Label^ label, String^ str);
@@ -180,22 +184,7 @@ namespace CLIChatProgram {
 
 	private: System::Void Server_Stand_Click(System::Object^ sender, System::EventArgs^ e) {
 
-		if (sever_thread == nullptr) {
-			sever_thread = gcnew Thread(gcnew ThreadStart(this, &MyForm::P2P_Server));
-			sever_thread->Start();
-		}
-		else {
-			listener->Stop();
-			Server_Thread_State = false;
-			if (sever_thread->Join(1000)) {
-				sever_thread = gcnew Thread(gcnew ThreadStart(this, &MyForm::P2P_Server));
-				sever_thread->Start();
-			}
-			else {
-				DC->server_state->Text = "サーバーエラー";
-			}
-
-		}
+		P2Pserver->Server_Stand();
 	}
 	};
 }
